@@ -14,26 +14,34 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var usernameTF: UITextField!
     @IBOutlet weak var passwordTF: UITextField!
     
-    // MARK: - viewDIDLoad
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    // MARK: - Private Properties
+    
+    private let username = "slava"
+    private let password = "qwerty2022"
+    
+    // MARK: - Override Methods
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let welcomeVC = segue.destination as? WelcomeViewController else { return }
+        
+        welcomeVC.username = usernameTF.text
+    }
+    
+    // Hide the keyboard when a screen touched
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        view.endEditing(true)
     }
     
     // MARK: - IBActions
     
-    @IBAction func forgotUsernameButtonTapped() {
-        showForgotAlert(title: "Forgot your username?", message: "Don't worry! Your username is", actionTitle: "Use your username", pasteTo: usernameTF, pasteValue: "slava")
+    @IBAction func unwind(for segue: UIStoryboardSegue) {
+        usernameTF.text = ""
+        passwordTF.text = ""
     }
     
-    @IBAction func forgotPassowrdButtonTapped() {
-        showForgotAlert(title: "Forgot your password?", message: "Don't worry! Your password is", actionTitle: "Use your password", pasteTo: passwordTF, pasteValue: "qwerty2022")
-    }
     
-    // MARK: - Segue: prepare and unwind
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let welcomeVC = segue.destination as? WelcomeViewController else { return }
+    @IBAction func loginButtonTapped() {
         
         if usernameTF.text!.isEmpty && passwordTF.text!.isEmpty {
             showAlert(title: "Username and password are empty", message: "Please, fill in your username and password. If you forgot them, please use appropriate buttons.")
@@ -46,32 +54,29 @@ class LoginViewController: UIViewController {
             return
         }
         
-        if (usernameTF.text != "slava") || (passwordTF.text != "qwerty2022") {
+        if (usernameTF.text != username) || (passwordTF.text != password) {
             showAlert(title: "Incorrect username or password", message: """
             Either username or password are incorrect. Please try again.
             
             If you forgot them, please use appropriate buttons.
             """)
+            
+            passwordTF.text = ""
+
             return
         }
         
-        welcomeVC.username = usernameTF.text
-    }
-    
-    @IBAction func unwind(for segue: UIStoryboardSegue) {
-        guard let _ = segue.source as? WelcomeViewController else { return }
+        performSegue(withIdentifier: "openWelcomeVC", sender: nil)
         
-        usernameTF.text = ""
-        passwordTF.text = ""
     }
     
-    // MARK: - Hide keyboard when screen touched
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        view.endEditing(true)
+    @IBAction func forgotUsernameButtonTapped() {
+        showForgotAlert(title: "Forgot your username?", message: "Don't worry! Your username is", actionTitle: "Use your username", pasteTo: usernameTF, pasteValue: username)
     }
     
+    @IBAction func forgotPassowrdButtonTapped() {
+        showForgotAlert(title: "Forgot your password?", message: "Don't worry! Your password is", actionTitle: "Use your password", pasteTo: passwordTF, pasteValue: password)
+    }
 }
 
 // MARK: - UIAlertControllers
