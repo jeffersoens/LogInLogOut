@@ -17,6 +17,13 @@ class SettingsViewController: UIViewController {
     // MARK: - Public Properties
     // нужно как-то получить данные user с LoginVC
     
+    // Override methods
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        view.endEditing(true)
+    }
+    
 
     // MARK: - IBActions
     
