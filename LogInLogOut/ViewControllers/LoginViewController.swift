@@ -15,19 +15,20 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var passwordTF: UITextField!
     
     // MARK: - Private Properties
+    private var user = initializeUser()
     
-    private let username = "slava"
-    private let password = "qwerty2022"
+    private lazy var username = user.username
+    private lazy var password = user.password
     
     // MARK: - Override Methods
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let welcomeVC = segue.destination as? WelcomeViewController else { return }
+        guard let userInfoVC = segue.destination as? UserInfoViewController else { return }
         
-        welcomeVC.username = usernameTF.text
+        userInfoVC.user = user
     }
     
-    // Hide the keyboard when a screen touched
+    // Hide the keyboard when a screen is touched
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         view.endEditing(true)
@@ -40,26 +41,37 @@ class LoginViewController: UIViewController {
         passwordTF.text = ""
     }
     
-    
     @IBAction func loginButtonTapped() {
         
         if usernameTF.text!.isEmpty && passwordTF.text!.isEmpty {
-            showAlert(title: "Username and password are empty", message: "Please, fill in your username and password. If you forgot them, please use appropriate buttons.")
+            showAlert(
+                title: "Username and password are empty",
+                message: "Please, fill in your username and password. If you forgot them, please use appropriate buttons."
+            )
             return
         } else if usernameTF.text!.isEmpty {
-            showAlert(title: "Username is empty", message: "Plese enter your username. In case you don't remember it, use 'Forgot username?' button.")
+            showAlert(
+                title: "Username is empty",
+                message: "Plese enter your username. In case you don't remember it, use 'Forgot username?' button."
+            )
             return
         } else if passwordTF.text!.isEmpty {
-            showAlert(title: "Password is empty", message: "Plese enter your password. In case you don't remember it, use 'Forgot passowrd?' button.")
+            showAlert(
+                title: "Password is empty",
+                message: "Plese enter your password. In case you don't remember it, use 'Forgot passowrd?' button."
+            )
             return
         }
         
         if (usernameTF.text != username) || (passwordTF.text != password) {
-            showAlert(title: "Incorrect username or password", message: """
-            Either username or password are incorrect. Please try again.
-            
-            If you forgot them, please use appropriate buttons.
-            """)
+            showAlert(
+                title: "Incorrect username or password",
+                message: """
+                Either username or password are incorrect. Please try again.
+                
+                If you forgot them, please use appropriate buttons.
+                """
+            )
             
             passwordTF.text = ""
 
@@ -71,11 +83,25 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func forgotUsernameButtonTapped() {
-        showForgotAlert(title: "Forgot your username?", message: "Don't worry! Your username is", actionTitle: "Use your username", pasteTo: usernameTF, pasteValue: username)
+        view.endEditing(true)
+        showForgotAlert(
+            title: "Forgot your username?",
+            message: "Don't worry! Your username is",
+            actionTitle: "Use your username",
+            pasteTo: usernameTF,
+            pasteValue: username
+        )
     }
     
     @IBAction func forgotPassowrdButtonTapped() {
-        showForgotAlert(title: "Forgot your password?", message: "Don't worry! Your password is", actionTitle: "Use your password", pasteTo: passwordTF, pasteValue: password)
+        view.endEditing(true)
+        showForgotAlert(
+            title: "Forgot your password?",
+            message: "Don't worry! Your password is",
+            actionTitle: "Use your password",
+            pasteTo: passwordTF,
+            pasteValue: password
+        )
     }
 }
 
@@ -96,7 +122,7 @@ extension LoginViewController {
 extension LoginViewController {
     private func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let ok = UIAlertAction(title: "OK", style: .default)
+        let ok = UIAlertAction(title: "OK", style: .default) 
         alert.addAction(ok)
         present(alert, animated: true)
     }
