@@ -15,17 +15,25 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var passwordTF: UITextField!
     
     // MARK: - Private Properties
-    private var user = initializeUser()
     
-    private lazy var username = user.username
-    private lazy var password = user.password
+    var user = User.getUser()
     
     // MARK: - Override Methods
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let userInfoVC = segue.destination as? UserInfoViewController else { return }
+        guard let tabBarVC = segue.destination as? UITabBarController else { return }
+        guard let viewControllers = tabBarVC.viewControllers else { return }
         
-        userInfoVC.user = user
+        for viewController in viewControllers {
+            switch viewController {
+            case let userInfoVC as UserInfoViewController:
+                userInfoVC.user = user
+            case let settingsVC as SettingsViewController:
+                settingsVC.user = user
+            default:
+                break
+            }
+        }
     }
     
     // Hide the keyboard when a screen is touched
@@ -37,6 +45,27 @@ class LoginViewController: UIViewController {
     // MARK: - IBActions
     
     @IBAction func unwind(for segue: UIStoryboardSegue) {
+        guard let settingsVC = segue.source as? SettingsViewController else {
+            print("false")
+            return
+        }
+        
+        user.username = settingsVC.user.username
+        user.password = settingsVC.user.password
+        
+        
+//        guard let viewControllers = tabBarVC.viewControllers else {
+//            print("false2")
+//            return
+//        }
+
+//        for viewController in viewControllers {
+//            if let settingsVC = viewController as? SettingsViewController {
+//                user.username = settingsVC.user.username
+//                user.password = settingsVC.user.password
+//            }
+//        }
+        
         usernameTF.text = ""
         passwordTF.text = ""
     }
@@ -63,7 +92,7 @@ class LoginViewController: UIViewController {
             return
         }
         
-        if (usernameTF.text != username) || (passwordTF.text != password) {
+        if (usernameTF.text != user.username) || (passwordTF.text != user.password) {
             showAlert(
                 title: "Incorrect username or password",
                 message: """
@@ -74,7 +103,7 @@ class LoginViewController: UIViewController {
             )
             
             passwordTF.text = ""
-
+            
             return
         }
         
@@ -89,7 +118,7 @@ class LoginViewController: UIViewController {
             message: "Don't worry! Your username is",
             actionTitle: "Use your username",
             pasteTo: usernameTF,
-            pasteValue: username
+            pasteValue: user.username
         )
     }
     
@@ -100,7 +129,7 @@ class LoginViewController: UIViewController {
             message: "Don't worry! Your password is",
             actionTitle: "Use your password",
             pasteTo: passwordTF,
-            pasteValue: password
+            pasteValue: user.password
         )
     }
 }
@@ -122,7 +151,7 @@ extension LoginViewController {
 extension LoginViewController {
     private func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let ok = UIAlertAction(title: "OK", style: .default) 
+        let ok = UIAlertAction(title: "OK", style: .default)
         alert.addAction(ok)
         present(alert, animated: true)
     }

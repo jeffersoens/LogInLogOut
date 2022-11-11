@@ -15,6 +15,8 @@ class UserInfoViewController: UIViewController {
     @IBOutlet weak var firstNameLabel: UILabel!
     @IBOutlet weak var secondNameLabel: UILabel!
     
+    @IBOutlet weak var ageLabel: UILabel!
+    
     @IBOutlet weak var cityLabel: UILabel!
     
     @IBOutlet weak var marriedLabel: UILabel!
@@ -40,24 +42,17 @@ class UserInfoViewController: UIViewController {
         super.viewDidLoad()
         previewUserInfo()
     }
-
 }
 
 // MARK: Labels configuration
 extension UserInfoViewController {
     private func previewUserInfo() {
-        guard let user = user else {
-            print("""
-                  User not found
-                  Почему-то user с LoginVC не привязывается к этому VC
-                  """)
-            return
-        }
         
         usernameLabel.text = user.username
         
         firstNameLabel.text = user.person.firstName
         secondNameLabel.text = user.person.secondName
+        ageLabel.text = user.person.age.formatted()
         
         cityLabel.text = user.person.city
         
@@ -74,10 +69,10 @@ extension UserInfoViewController {
             childrenLabel.isHidden = true
         }
         
-        if user.person.working {
-            companyLabel.text = user.person.company
-            departmentLabel.text = user.person.department
-            positionLabel.text = user.person.position
+        if user.person.job.working {
+            companyLabel.text = user.person.job.company
+            departmentLabel.text = user.person.job.department
+            positionLabel.text = user.person.job.position
         } else {
             companyLabel.text = "Not working"
             departmentTitleLabel.isHidden = true
